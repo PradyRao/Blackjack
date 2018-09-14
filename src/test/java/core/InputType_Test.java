@@ -1,16 +1,20 @@
 package core;
 
+import org.junit.Test;
+
 import junit.framework.TestCase;
 
 public class InputType_Test extends TestCase{
-	public void TestConsole() {
+	@Test
+	public void testConsole() {
 		InputType type = new InputType("c");
 		
-		assert("c", type.getType());
+		assertEquals("c", type.getType());
 	}
-	public void TestFile() {
+	@Test
+	public void testFile() {
 		InputType type = new InputType("f");
 		
-		assert("f", type.getType());
+		assertEquals("f", type.getType());
 	}
 }
