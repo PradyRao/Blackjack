@@ -6,9 +6,18 @@ public class Deck_Test extends TestCase{
 	public void testDeck() {
 		Deck deck = new Deck();
 		Deck deck2 = new Deck();
+		int a = deck.getSize();
 		
 		assertEquals(52, deck.getSize());
 		assertEquals(52, deck2.getSize());
-		assertNotSame(deck.cards, deck2.cards);
+		//both decks are populated the same way, thus checks whether shuffleDeck() reordered the arraylists 
+		assertNotSame(deck.getCardList(), deck2.getCardList());
+		
+		for(int i = 0; i < 5; i++){
+			deck.drawCard();
+			a--;
+		}
+		
+		assertEquals(a, deck.getSize());
 	}
 }
