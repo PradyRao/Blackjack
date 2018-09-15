@@ -7,38 +7,36 @@ public class Hand_Test extends TestCase {
 		Hand hand = new Hand();
 		Deck deck = new Deck();
 		
-		//first tests whether hand has any cards
+		//first tests whether hand has any cards, and add and hit functions
 		assertEquals(0, hand.getSize());
-		hand.add(deck.drawCard());
+		hand.addCard(new Card("H", "5", 5));
 		assertEquals(1, hand.getSize());
-		hand.hitMe(deck);
+		hand.addCard(new Card("D", "8", 8));
 		assertEquals(2, hand.getSize());
 		
 		//checks to see if the totaling of the score is working
-		int sum;
+		int sum = 0;
 		for(int i = 0; i < hand.getSize(); i++) {
 			sum += hand.getCards().get(i).getValue();
 		}
-		assertEquals(sum, hand.getCurrSum());
+		assertEquals(sum, hand.calcScoreWithAces());
+		
+		
+		Card card = new Card("H","A", 11);
+		hand.addCard(card);
+		//testing to see if value of ace has changed
+		int sum2 = 0;
+		for(int i = 0; i < hand.getSize(); i++) {
+			sum2 += hand.getCards().get(i).getValue();
+		}
+		assertEquals(sum2 - 10, hand.calcScoreWithAces());
+		
+		//testing hitme
+		hand.hitMe(deck);
+		assertEquals(4, hand.getSize());
 		
 		//checking if boolean for checking for aces is working
-		Card card = new Card("H","A", 11);
-		hand.add(card);
 		assertEquals(true, hand.getIsAce());
-
-		//testing to see if value of ace has changed
-		for(int i = 0; i < hand.getSize(); i++) {
-			if((hand.getCards().get(i).getKey().equals("A")) && hand.getCurrSum() <= 17) {
-				assertEquals(1, hand.getCards().get(i).getValue());
-			}
-		}
 		
-		/*
-		for(int i = 0; i < hand.getSize(); i++) {
-			if(hand.getCards().get(i).getKey().equals("A")) {
-				hand.setIsAce(true);
-			}
-		}
-		*/
 	}
 }
