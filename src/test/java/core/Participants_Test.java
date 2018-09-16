@@ -28,11 +28,11 @@ public class Participants_Test extends TestCase{
 		Deck deck = new Deck();
 		
 		
-		player.addCard(new Card("H", "K", 10));
-		dealer.addCard(new Card("S", "7", 7));
+		player.getHand().addCard(new Card("H", "K", 10));
+		dealer.getHand().addCard(new Card("S", "7", 7));
 		
-		player.addCard(new Card("D", "A", 11));
-		dealer.addCard(new Card("C", "8", 8));
+		player.getHand().addCard(new Card("D", "A", 11));
+		dealer.getHand().addCard(new Card("C", "8", 8));
 		
 		assertEquals(true, player.instantWin());
 		assertEquals(false, dealer.instantWin());
