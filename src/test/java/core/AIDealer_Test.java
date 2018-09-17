@@ -4,32 +4,31 @@ import junit.framework.TestCase;
 public class AIDealer_Test extends TestCase{
 	@Test
 	public void testDealerHitHander() {
-		Deck deck = new Deck();
-		Participants dealer = new AIDealer(deck);
-		Participants dealer2 = new AIDealer(deck);
-		Participants dealer3 = new AIDealer(deck);
+		Participants dealer = new AIDealer();
+		Participants dealer2 = new AIDealer();
+		Participants dealer3 = new AIDealer();
 		
 		//testing hit handler
 		dealer.getHand().addCard(new Card("H", "5", 5));
 		dealer.getHand().addCard(new Card("S", "10", 10));
-		assertEquals(true, dealer.dealerHitHandler());
+		assertEquals(true, ((AIDealer) dealer).dealerHitHandler());
 	
 		
 		dealer2.getHand().addCard(new Card("H", "7", 7));
 		dealer2.getHand().addCard(new Card("S", "10", 10));
-		assertEquals(false, dealer2.dealerHitHandler());
+		assertEquals(false, ((AIDealer) dealer2).dealerHitHandler());
 		
 		dealer3.getHand().addCard(new Card("H", "A", 11));
 		dealer3.getHand().addCard(new Card("S", "6", 6));
-		assertEquals(true, dealer3.dealerHitHandler());
+		assertEquals(true, ((AIDealer) dealer3).dealerHitHandler());
 		
 	}
 	
 	@Test
 	public void testTurnHander() {
-		Deck deck = new Deck();
-		Participants dealer = new AIDealer(deck);
-		Participants dealer2 = new AIDealer(deck);
+		Deck deck = new Deck(); //dummy deck as a filler for turnHandler parameter
+		Participants dealer = new AIDealer();
+		Participants dealer2 = new AIDealer();
 		
 		dealer.getHand().addCard(new Card("H", "5", 5));
 		dealer.getHand().addCard(new Card("S", "10", 10));

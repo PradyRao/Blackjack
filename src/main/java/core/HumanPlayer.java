@@ -7,6 +7,11 @@ public class HumanPlayer extends Participants {
 		// TODO Auto-generated constructor stub
 	}
 
+	public HumanPlayer() {
+		// TODO Auto-generated constructor stub
+		super();
+	}
+
 	public String printHand() {
 		// TODO Auto-generated method stub
 		return super.printHand();

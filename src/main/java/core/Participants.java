@@ -14,6 +14,11 @@ public abstract class Participants {
 			hand.addCard(deck.drawCard());
 		}	
 	}
+	
+	//constructor for testing purposes
+	public Participants(){
+	  hand = new Hand();
+	}
 
 	public Hand getHand() {
 		return hand;

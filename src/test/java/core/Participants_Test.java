@@ -39,9 +39,4 @@ public class Participants_Test extends TestCase{
 		assertEquals(true, player.instantBJ());
 		assertEquals(false, dealer.instantBJ());
 	}
-	
-	@Test
-	public void testPlayer() {
-		
-	}
 }
