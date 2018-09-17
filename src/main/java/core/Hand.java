@@ -39,13 +39,16 @@ public class Hand {
 		for(int i = 0; i < this.getSize(); i++) {
 			sum += this.getCards().get(i).getValue();
 			if(this.getCards().get(i).getKey().equals("A")) {
-				this.setIsAce(true); //for testing
+				this.setIsAce(true); //says there is an Ace card worth 11
 				count++;
 			}	
 		}
 		while(sum > 21 && count > 0) {
 			sum -= 10;
 			count--;
+		}
+		if(count == 0) {
+			this.setIsAce(false); //to tell dealer that there is no Ace worth 11 in his hand
 		}
 		return sum;
 	}

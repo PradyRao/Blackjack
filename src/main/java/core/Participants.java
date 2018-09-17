@@ -2,6 +2,11 @@ package core;
 
 public abstract class Participants {
 	Hand hand;
+	Hand split1 = new Hand();
+	Hand split2 = new Hand();
+	boolean split = false;
+	boolean busted = false;
+	boolean stand = false;
 	
 	public Participants(Deck deck) {
 		hand = new Hand();
@@ -9,18 +14,31 @@ public abstract class Participants {
 			hand.addCard(deck.drawCard());
 		}	
 	}
-	
+
 	public Hand getHand() {
-		return this.hand;
+		return hand;
 	}
 	
-	public boolean instantWin() {
+	public boolean instantBJ() {
 		if(this.hand.calcScoreWithAces() == 21) {
 			return true;
 		}
 		return false;
 	}
 	
-	public abstract String printHand();
+	public String printHand() {
+		return this.hand.getCards().toString();
+	}
 	public abstract void turnHandler(Deck deck);
+	
+	//for the future
+	public void splitHand(Deck deck) {
+		split1.addCard(hand.getCards().get(0));
+		split1.addCard(deck.drawCard());	
+		
+		split2.addCard(hand.getCards().get(1));
+		split2.addCard(deck.drawCard());
+		
+		split = true;		
+	}
 }

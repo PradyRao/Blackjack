@@ -35,8 +35,24 @@ public class Hand_Test extends TestCase {
 		hand.hitMe(deck);
 		assertEquals(4, hand.getSize());
 		
-		//checking if boolean for checking for aces is working
-		assertEquals(true, hand.getIsAce());
+		//checking if boolean for checking for aces worth 11s is working
+		assertEquals(false, hand.getIsAce());
 		
+	}
+	
+	@Test
+	public void testAce() {
+		Hand hand = new Hand();
+		
+		//first tests whether hand has any cards, and add and hit functions
+		assertEquals(0, hand.getSize());
+		hand.addCard(new Card("H","A", 11));
+		assertEquals(1, hand.getSize());
+		hand.addCard(new Card("D", "8", 8));
+		assertEquals(2, hand.getSize());
+		
+		//checks if there is an Ace card worth 11
+		assertEquals(19, hand.calcScoreWithAces());	
+		assertEquals(true, hand.getIsAce());
 	}
 }

@@ -7,10 +7,9 @@ public class HumanPlayer extends Participants {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
 	public String printHand() {
 		// TODO Auto-generated method stub
-		return null;
+		return super.printHand();
 	}
 
 	@Override
