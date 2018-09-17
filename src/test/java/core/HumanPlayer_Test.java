@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 public class HumanPlayer_Test extends TestCase{
 	
 	@Test
-	public void testPlayer() {
+	public void testPlayerTurnHandler() {
 		
 	}
 }

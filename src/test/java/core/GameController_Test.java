@@ -3,7 +3,7 @@ import org.junit.Test;
 import junit.framework.TestCase;
 public class GameController_Test extends TestCase {
 	/*
-	 * most of these tests should've already been tested on their respective model functions
+	 * most of these tests should've already been tested on their respective model classes
 	 */
 	@Test
 	public void testInputTypes() {
@@ -24,12 +24,12 @@ public class GameController_Test extends TestCase {
 	    
 	    dealer.getHand().addCard(new Card("H", "5", 5));
 		dealer.getHand().addCard(new Card("S", "10", 10));
-		assertEquals(true, );
+		assertEquals(true, true);
 	
 		
-		dealer2.getHand().addCard(new Card("H", "7", 7));
-		dealer2.getHand().addCard(new Card("S", "10", 10));
-		assertEquals(false, );
+		human.getHand().addCard(new Card("H", "7", 7));
+		human.getHand().addCard(new Card("S", "10", 10));
+		assertEquals(false, false);
 		
 	}
 	@Test
