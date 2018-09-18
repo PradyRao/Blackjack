@@ -3,11 +3,14 @@ package core;
 import java.util.Scanner;
 
 public class GameController {
-	Scanner sc = new Scanner(System.in);
 	Participants human;
 	Participants dealer;
 	Deck gameDeck = new Deck();
-	String input = "idle";
+	String input = "";
+	String dealerName = "Dealer";
+	String playerName = "Player(you)";
+	UI view = new UI();
+	Scanner sc = new Scanner(System.in);
 	
 	boolean pInstWin = false;
 	boolean dInstWin = false;
@@ -19,10 +22,9 @@ public class GameController {
 	}
 	
 	public void selectState(){
-		while(input.equals("idle")){
-			System.out.println("choose play type - c for console and f for file. q to quit: ");
-			input = sc.nextLine();
-		}
+		view.outputGamePrompt();
+		input = sc.nextLine();
+		
 		if(input.equals("c")){
 			consolePlay();
 		}
@@ -31,20 +33,25 @@ public class GameController {
 		}
 		else if(input.equals("q")){
 			//exit the game
+			sc.close();
 		}
 		else {
-			//invalid input
+			view.invalidPrompt();
 		}
-	
 	}
 	
 	public void initialize(Deck deck) {
 		human = new HumanPlayer(deck);
 	    dealer = new AIDealer(deck);
 	
-	    System.out.println("Player Hand: " + ((HumanPlayer) human).printHand());
-	    System.out.println("Dealer Hand: " + ((AIDealer)dealer).printHand(false));
-	    System.out.println();
+	    view.displayHand(playerName, human.printHand());
+	    view.displayHand(dealerName, ((AIDealer)dealer).printHand(false));
+	    view.emptyLine();
+	}
+	
+	
+	public int getScore(Participants type) {
+		return type.getHand().calcScoreWithAces();
 	}
 
 	public void initialBJWinner() {
@@ -72,27 +79,27 @@ public class GameController {
 	}
 	
 	public void selectWinner() {
-		int a = dealer.getHand().calcScoreWithAces();
-		int b = human.getHand().calcScoreWithAces();
+		int a = getScore(dealer);
+		int b = getScore(human);
 		if(b > 21) {
-			System.out.println("Better luck next time! The dealer has won the game");
+			view.outputDealerWin();
 			dealerWin = true;
 		}
 		else if(a > 21 && b <= 21) {
-			System.out.println("Congrats! You have won the game!");
+			view.outputPlayerWin();
 		}
 		else if(a <= 21 && b > 21) {
 			dealerWin = true;
-			System.out.println("Better luck next time! The dealer has won the game");
+			view.outputDealerWin();
 		}
 		else if(a >= b && a <= 21) {
 			dealerWin = true;
-			System.out.println("Better luck next time! The dealer has won the game");
+			view.outputDealerWin();
 		}
 		else if(b > a && b <= 21) {
-			System.out.println("Congrats! You have won the game!");
+			view.outputPlayerWin();
 		}
-		System.out.println();
+		view.emptyLine();
 	}
 
 	public void consolePlay(){
@@ -100,17 +107,17 @@ public class GameController {
 		
 		initialBJWinner();
 		if(dInstWin) {
-			System.out.println("result of checking initial blackjack winner: Dealer");
-			System.out.println("Dealer's cards: " + ((AIDealer)dealer).printHand(true));
+			view.initialBJOutput(dealerName);
+			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
 		}	
 		else if(pInstWin) {
-			System.out.println("result of checking initial blackjack winner: Player(you)");
-			System.out.println("Dealer's cards: " + ((AIDealer)dealer).printHand(true));
+			view.initialBJOutput(playerName);
+			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
 		}
 		else {
 			humanPlay();
 			if(human.getHand().calcScoreWithAces() > 21) {
-				System.out.println("Dealer's cards: " + ((AIDealer)dealer).printHand(true));
+				view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
 				selectWinner();
 			}
 			else {
@@ -118,14 +125,12 @@ public class GameController {
 				selectWinner();
 			}
 		}	
-		//sets input to idle again so user can choose what to do next
-		input = "idle";
-		//goes back to input select to choose what to do next
+		//goes back to input select to choose whether to play again
 		selectState();
 	}
 
 	public void filePlay() {
-		
+		//not yet implemented
 	}
 
 	/*
@@ -135,19 +140,16 @@ public class GameController {
 	 */
 	public void dealerPlay() {
 		// TODO Auto-generated method stub
-		int a = dealer.getHand().calcScoreWithAces();
 		dealer.turnHandler(gameDeck);  
 		if(((AIDealer) dealer).getBusted()) {
-			a = dealer.getHand().calcScoreWithAces();
-			System.out.println("Dealer has busted, score: " + a);
-			System.out.println("dealer's cards: " + ((AIDealer)dealer).printHand(true));
+			view.bustedOutput(dealerName, getScore(dealer));
+			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
 		}
 		else if(((AIDealer) dealer).getStand() && !((AIDealer) dealer).getBusted()) {
-			a = dealer.getHand().calcScoreWithAces();
-			System.out.println("Dealer has chosen to stand, dealer's cards: " + ((AIDealer)dealer).printHand(true));
-			System.out.println("Dealer score: " + a);
+			view.standOutput(dealerName, getScore(dealer));
+			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
 		}
-		System.out.println();
+		view.emptyLine();
 	}
 
 	/*
@@ -157,33 +159,29 @@ public class GameController {
 	 */
 	public void humanPlay() {
 		// TODO Auto-generated method stub
-		int a = human.getHand().calcScoreWithAces();
-		//getting the most recent card drawn from player hand and making it a string 
-		String hitCard = "";
-		if(a <= 21) {
-			System.out.println("your score is: " + a);
-			System.out.println("would you like to hit (H) or stand (S): ");
+		if(getScore(human) <= 21) {
+			view.displayScore(playerName, getScore(human));
+			view.outputResponsePrompt();
 			input = sc.nextLine();
-			while(!input.equals("S") && a < 21) {
+			while(!input.equals("S") && getScore(human) < 21) {
 				human.getHand().hitMe(gameDeck);
-				a = human.getHand().calcScoreWithAces();
-				hitCard = human.printHand();
-				System.out.println("your cards are: " + hitCard);
-				System.out.println("your score is: " + a);
-				if(a > 21) {
+				view.displayHand(playerName, human.printHand());
+				view.displayScore(playerName, getScore(human));
+				if(getScore(human) > 21) {
 					break;
 				}
-				System.out.println("would you like to hit (H) or stand (S): ");
+				view.outputResponsePrompt();
 				input = sc.nextLine();
 			}
 		}
 		if(input.equals("S")) {
-			System.out.println("you have chosen to stand with score: " + a);
+			view.standOutput(playerName, getScore(human));
 		}
 		else {
-			System.out.println("you have busted");
+			view.bustedOutput(playerName, getScore(human));
 		}
-		System.out.println();	
+		view.displayHand(playerName, human.printHand());
+		view.emptyLine();
 	}
 	
 	/* 
