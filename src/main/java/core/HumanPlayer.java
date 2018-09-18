@@ -18,4 +18,15 @@ public class HumanPlayer extends Participants {
 		
 	}
 
+	@Override
+	public boolean checkCanSplit() {
+		// TODO Auto-generated method stub
+		if(this.getHand().getCards().get(0).getKey() == 
+				this.getHand().getCards().get(1).getKey()) {
+			return true;	
+		}
+		return false;
+	}
+	
+
 }

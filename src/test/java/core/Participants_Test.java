@@ -10,12 +10,6 @@ public class Participants_Test extends TestCase{
 		Participants player = new HumanPlayer(deck);
 		Participants dealer = new AIDealer(deck);
 		
-		
-		/*for(int i = 0; i < 2; i++) {
-			player.getHand().addCard(deck.drawCard());
-			dealer.getHand().addCard(deck.drawCard());
-		}*/
-		
 		assertEquals(2, player.getHand().getSize());
 		assertEquals(2, dealer.getHand().getSize());
 		
@@ -47,17 +41,17 @@ public class Participants_Test extends TestCase{
 		player.getHand().addCard(new Card("H", "K", 10));
 		dealer.getHand().addCard(new Card("S", "5", 5));
 		
-		player.getHand().addCard(new Card("D", "10", 10));
+		player.getHand().addCard(new Card("D", "K", 10));
 		dealer.getHand().addCard(new Card("C", "5", 5));
 		
-		assertEquals(true, player.checkSplit());
-		assertEquals(true, dealer.checkSplit());
+		assertEquals(true, player.checkCanSplit());
+		assertEquals(true, dealer.checkCanSplit());
 		
 		player.splitHand(deck);
 		dealer.splitHand(deck);
 		
 		assertNotSame(player.getHand(), player.split1);
-		assertEquals(player.getHand(), player.split2);
+		assertNotSame(player.getHand(), player.split2);
 		
 		assertNotSame(dealer.getHand(), dealer.split1);
 		assertNotSame(dealer.getHand(), dealer.split2);

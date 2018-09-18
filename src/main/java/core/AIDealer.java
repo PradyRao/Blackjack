@@ -61,5 +61,15 @@ public class AIDealer extends Participants {
 			setStand(false);
 		}
 	}
+
+	@Override
+	public boolean checkCanSplit() {
+		// TODO Auto-generated method stub
+		if(this.getHand().getCards().get(0).getKey() == 
+				this.getHand().getCards().get(1).getKey() && this.getHand().calcScoreWithAces() <= 17) {
+			return true;	
+		}
+		return false;
+	}
 	
 }

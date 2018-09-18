@@ -5,7 +5,7 @@ public abstract class Participants {
 	Hand hand;
 	Hand split1 = new Hand();
 	Hand split2 = new Hand();
-	boolean split = false;
+	boolean canSplit = false;
 	boolean busted = false;
 	boolean stand = false;
 	
@@ -45,8 +45,7 @@ public abstract class Participants {
 		split1.addCard(deck.drawCard());	
 		
 		split2.addCard(hand.getCards().get(1));
-		split2.addCard(deck.drawCard());
-		
-		split = true;		
+		split2.addCard(deck.drawCard());	
 	}
+	public abstract boolean checkCanSplit();
 }
