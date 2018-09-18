@@ -15,6 +15,12 @@ public class Deck {
 		shuffleDeck();
 	}
 	
+	/*public Deck(String x) {
+		cardList = new ArrayList<Card>();
+		init();
+		populateDeck();
+	}*/
+	
 	private void init() {
 		values.put("2", 2);
 		values.put("3", 3);

@@ -12,11 +12,6 @@ public class HumanPlayer extends Participants {
 		super();
 	}
 
-	public String printHand() {
-		// TODO Auto-generated method stub
-		return super.printHand();
-	}
-
 	@Override
 	public void turnHandler(Deck deck) {
 		// TODO Auto-generated method stub

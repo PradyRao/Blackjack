@@ -22,7 +22,7 @@ public class AIDealer extends Participants {
 	}
 
 	public boolean dealerHitHandler() {
-		if(getHand().calcScoreWithAces() < 16) {
+		if(getHand().calcScoreWithAces() <= 16) {
 			return true;
 		}
 		//soft 17
@@ -32,6 +32,20 @@ public class AIDealer extends Participants {
 		return false;
 	}
 	
+	public boolean getBusted() {
+		return this.busted;
+	}
+	public boolean getStand() {
+		return this.stand;
+	}
+	
+	public void setBusted(boolean bust) {
+		this.busted = bust;
+	}
+	public void setStand(boolean stnd) {
+		this.stand = stnd;
+	}
+	
 	@Override
 	public void turnHandler(Deck deck) {
 		// TODO Auto-generated method stub
@@ -39,12 +53,12 @@ public class AIDealer extends Participants {
 			this.hand.hitMe(deck);
 		}
 		if(this.getHand().calcScoreWithAces() > 17 && this.getHand().calcScoreWithAces() <= 21) {
-			busted = false;
-			stand = true;
+			setBusted(false);
+			setStand(true);
 		}
 		else {
-			busted = true;
-			stand = false;
+			setBusted(true);
+			setStand(false);
 		}
 	}
 	

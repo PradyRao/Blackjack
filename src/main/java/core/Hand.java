@@ -26,6 +26,14 @@ public class Hand {
 		cardList.add(card);
 	}
 	
+	public String displayHand() {
+		String a = "";
+		for(Card s: this.cardList) {
+			a += s.toString() + " ";
+		}
+		return a;
+	}
+	
 	/*
 	 * calculates current total score by
 	 * first calculating sum without any changes
@@ -55,7 +63,7 @@ public class Hand {
 	
 	public Card hitMe(Deck deck) {
 		Card draw = deck.drawCard();
-		cardList.add(draw);
+		this.cardList.add(draw);
 		return draw;
 	}
 }

@@ -1,5 +1,6 @@
 package core;
 
+
 public abstract class Participants {
 	Hand hand;
 	Hand split1 = new Hand();
@@ -32,8 +33,10 @@ public abstract class Participants {
 	}
 	
 	public String printHand() {
-		return this.hand.getCards().toString();
+		// TODO Auto-generated method stub
+		return this.getHand().displayHand();
 	}
+	
 	public abstract void turnHandler(Deck deck);
 	
 	//for the future

@@ -30,4 +30,9 @@ public class Card {
 	public void setValue(int value) {
 		cardValue = value;
 	}
+	
+	@Override
+	public String toString() {
+		return cardType + cardKey;
+	}
 }
