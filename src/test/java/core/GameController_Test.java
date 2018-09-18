@@ -1,16 +1,24 @@
 package core;
+import java.util.Scanner;
+
 import org.junit.Test;
 import junit.framework.TestCase;
 public class GameController_Test extends TestCase {
-	/*
-	 * most of these tests should've already been tested on their respective model classes
-	 */
+	UI View = new UI();
+	Scanner sc = new Scanner(System.in);
 	@Test
 	public void testInputTypes() {
 		GameController game = new GameController();
 		
-		game.setInputType("c");
-		assertNotSame("idle", game.getInputType());
+		View.outputGamePrompt();
+		game.setInputType(sc.nextLine());
+
+		assertEquals("c", game.getInputType());
+		
+		View.outputGamePrompt();
+		game.setInputType(sc.nextLine());
+		assertEquals("f", game.getInputType());
+
 	}
 	@Test
 	public void testInitialize() {

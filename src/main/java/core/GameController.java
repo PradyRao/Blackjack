@@ -189,12 +189,12 @@ public class GameController {
 	 */
 	public void setInputType(String string) {
 		// TODO Auto-generated method stub
-		
+		input = string;
 	}
 
 	public Object getInputType() {
 		// TODO Auto-generated method stub
-		return null;
+		return input;
 	}
 }
 		
