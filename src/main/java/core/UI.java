@@ -33,7 +33,7 @@ public class UI {
 		System.out.println(name + "'s score is: " + score);
 	}
 	public void outputResponsePrompt() {
-		System.out.println("would you like to hit (H) or stand (S): ");
+		System.out.println("would you like to hit (H), stand (S), split(D): ");
 	}
 	
 }

@@ -50,11 +50,11 @@ public class Participants_Test extends TestCase{
 		player.splitHand(deck);
 		dealer.splitHand(deck);
 		
-		assertNotSame(player.getHand(), player.split1);
-		assertNotSame(player.getHand(), player.split2);
+		assertNotSame(player.getHand(), player.split[0]);
+		assertNotSame(player.getHand(), player.split[1]);
 		
-		assertNotSame(dealer.getHand(), dealer.split1);
-		assertNotSame(dealer.getHand(), dealer.split2);
+		assertNotSame(dealer.getHand(), dealer.split[0]);
+		assertNotSame(dealer.getHand(), dealer.split[1]);
 		
 	}
 }

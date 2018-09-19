@@ -28,5 +28,9 @@ public class HumanPlayer extends Participants {
 		return false;
 	}
 	
+	public void calcBestScore() {
+		
+	}
+	
 
 }
