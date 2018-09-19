@@ -1,26 +1,10 @@
 package core;
 import java.util.Scanner;
-
 import org.junit.Test;
 import junit.framework.TestCase;
 public class GameController_Test extends TestCase {
 	UI View = new UI();
-	Scanner sc = new Scanner(System.in);
-	@Test
-	public void testInputTypes() {
-		GameController game = new GameController();
-		
-		System.out.println("Please print c and then f");
-		
-		View.outputGamePrompt();
-		game.setInputType(sc.nextLine());
-		assertEquals("c", game.getInputType());
-		
-		View.outputGamePrompt();
-		game.setInputType(sc.nextLine());
-		assertEquals("f", game.getInputType());
-
-	}
+	Scanner sc;
 	@Test
 	public void testInitialize() {
 		GameController game = new GameController();
@@ -61,8 +45,13 @@ public class GameController_Test extends TestCase {
 		
 	}
 	
+	/*
+	 * please choose "n" on the last option when testing this method, or else scanner closes and fails the next method
+	 * when running this test, press D in the first option to split (doesnt account for invalid inputs)
+	 */
 	@Test
 	public void testSplittingPlayerGame() {
+		sc = new Scanner(System.in);
 		GameController game = new GameController();
 		System.out.println("Player Split Test starts here");
 		game.dealer = new AIDealer();
@@ -80,8 +69,13 @@ public class GameController_Test extends TestCase {
 		game.consolePlay();
 	}
 	
+	/*
+	 * please choose "n" on the last option when testing this method, or else scanner closes and fails the next method
+	 * when running this test, press S in the first option Stand (doesnt account for invalid inputs)
+	 */
 	@Test
 	public void testSplittingDealerGame() {
+		sc = new Scanner(System.in);
 		GameController game = new GameController();
 		System.out.println("Dealer Split Test starts here");
 		game.dealer = new AIDealer();
@@ -122,6 +116,57 @@ public class GameController_Test extends TestCase {
 		
 		assertEquals(17, game.getBestScore(game.human));
 		
+	}
+	
+	/*
+	 * please choose "n" on the last option when testing this method, or else scanner closes and fails the next method
+	 * when running this test, press s in the first option to Stand (doesnt account for invalid inputs)
+	 */
+	@Test
+	public void testDealerBust() {
+		sc = new Scanner(System.in);
+		GameController game = new GameController();
+		System.out.println("Dealer Bust Test starts here");
+		game.dealer = new AIDealer();
+		game.human = new HumanPlayer();
+		
+		game.human.getHand().addCard(new Card("H", "3", 3));
+		game.dealer.getHand().addCard(new Card("S", "10", 10));
+		
+		game.human.getHand().addCard(new Card("D", "5", 5));
+		game.dealer.getHand().addCard(new Card("C", "5", 5));
+		game.dealer.getHand().addCard(new Card("C", "9", 9));
+		
+		View.displayHand("human", game.human.printHand());
+		View.displayHand("dealer", game.dealer.printHand());
+		
+		game.consolePlay();
+	}
+	
+	/*
+	 * please choose "n" on the last option when testing this method, or else scanner closes and fails the next method
+	 * automatically busts player, causing dealer to win
+	 */
+	@Test
+	public void testPlayerbust() {
+		sc = new Scanner(System.in);
+		GameController game = new GameController();
+		System.out.println("Player Bust Test starts here");
+		game.dealer = new AIDealer();
+		game.human = new HumanPlayer();
+		
+		game.human.getHand().addCard(new Card("H", "10", 10));
+		game.dealer.getHand().addCard(new Card("S", "10", 10));
+		
+		game.human.getHand().addCard(new Card("C", "9", 9));
+		game.human.getHand().addCard(new Card("D", "5", 5));
+		game.dealer.getHand().addCard(new Card("C", "9", 9));
+
+		
+		View.displayHand("human", game.human.printHand());
+		View.displayHand("dealer", game.dealer.printHand());
+		
+		game.consolePlay();
 	}
 
 }

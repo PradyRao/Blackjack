@@ -30,7 +30,7 @@ public class GameController {
 			consolePlay();
 		}
 		else if(input.equals("f")){
-			initialize(gameDeck);
+			//initialize(gameDeck);
 			filePlay(); //not implemented yet
 		}
 		else if(input.equals("q")){
@@ -127,7 +127,14 @@ public class GameController {
 			}
 		}	
 		//goes back to input select to choose whether to play again
-		selectState();
+		System.out.println("do you want to go back to main menu? Yes(y) No(n): ");
+		input = sc.nextLine();
+		if(input.equals("y")) {
+			selectState();
+		}
+		else {
+			System.out.println("thanks for playing!");
+		}
 	}
 
 	public void filePlay() {
@@ -161,6 +168,10 @@ public class GameController {
 				dealerView();
 			}		
 		}
+		else if(getScore(dealer) > 21) {
+			view.bustedOutput(dealerName, getScore(dealer));
+			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
+		}	
 		else {
 			dealer.setCurrHand(dealer.hand);
 			dealer.turnHandler(gameDeck);
@@ -216,6 +227,9 @@ public class GameController {
 				input = sc.nextLine();
 				doTheHumanGame(human.hand);
 			}
+		}
+		else if(getScore(human) > 21) {
+			view.bustedOutput(playerName, getScore(human));
 		}
 		else {
 			doTheHumanGame(human.hand);	

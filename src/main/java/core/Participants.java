@@ -6,10 +6,8 @@ public abstract class Participants {
 	Hand[] split = new Hand[2];
 	Hand currHand;
 	boolean canSplit = false;
-	boolean busted = false;
-	boolean stand = false;
 	boolean hasSplit = false;
-	boolean hand1bust = false;
+	
 	
 	public Participants(Deck deck) {
 		hand = new Hand();

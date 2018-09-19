@@ -33,7 +33,7 @@ public class AIDealer extends Participants {
 		return false;
 	}
 	
-	public boolean getBusted() {
+	/*public boolean getBusted() {
 		return this.busted;
 	}
 	public boolean getStand() {
@@ -45,7 +45,7 @@ public class AIDealer extends Participants {
 	}
 	public void setStand(boolean stnd) {
 		this.stand = stnd;
-	}
+	}*/
 	
 	@Override
 	public void turnHandler(Deck deck) {
