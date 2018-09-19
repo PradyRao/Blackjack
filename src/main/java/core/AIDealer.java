@@ -1,7 +1,8 @@
 package core;
 
 public class AIDealer extends Participants {
-
+	UI view = new UI();
+	
 	public AIDealer(Deck deck) {
 		super(deck);
 		// TODO Auto-generated constructor stub
@@ -16,7 +17,7 @@ public class AIDealer extends Participants {
 	public String printHand(boolean visible) {
 		// TODO Auto-generated method stub
 		if(visible == false) {
-			return hand.getCards().get(0).toString();
+			return currHand.getCards().get(0).toString();
 		}
 		return super.printHand();	
 	}
@@ -48,20 +49,11 @@ public class AIDealer extends Participants {
 	
 	@Override
 	public void turnHandler(Deck deck) {
-		// TODO Auto-generated method stub
 		while(this.dealerHitHandler()) {
-			this.hand.hitMe(deck);
-		}
-		if(this.getHand().calcScoreWithAces() > 17 && this.getHand().calcScoreWithAces() <= 21) {
-			setBusted(false);
-			setStand(true);
-		}
-		else {
-			setBusted(true);
-			setStand(false);
+			this.getHand().hitMe(deck);
 		}
 	}
-
+	
 	@Override
 	public boolean checkCanSplit() {
 		// TODO Auto-generated method stub

@@ -3,11 +3,7 @@ package core;
 import java.util.Scanner;
 
 public class GameController {
-	int[] bestHumanScore = new int[2];
-	int index = 0;
-	
-	Participants human, human2;
-	
+	Participants human;
 	Participants dealer;
 	Deck gameDeck = new Deck();
 	String input = "";
@@ -86,7 +82,7 @@ public class GameController {
 	//SO FAR UP TO HERE IS GOOD
 	
 	public void selectWinner() {
-		int a = getScore(dealer);
+		int a = getBestScore(dealer);
 		int b = getBestScore(human);
 		if(b > 21) {
 			view.outputDealerWin();
@@ -130,13 +126,24 @@ public class GameController {
 				selectWinner();
 			}
 		}	
-		
 		//goes back to input select to choose whether to play again
 		selectState();
 	}
 
 	public void filePlay() {
 		//not yet implemented
+	}
+	
+	public void setAndDisplaySplit(String name, Participants player) {
+		player.splitHand(gameDeck);
+		
+		System.out.println(name + " deck has been split");
+		System.out.println("new hand 1: ");
+		view.displayHand(name, player.split[0].displayHand());
+		view.displayScore(name, player.split[0].calcScoreWithAces());
+		System.out.println("new hand 2: ");
+		view.displayHand(name, player.split[1].displayHand());
+		view.displayScore(name, player.split[1].calcScoreWithAces());
 	}
 
 	/*
@@ -146,16 +153,31 @@ public class GameController {
 	 */
 	public void dealerPlay() {
 		// TODO Auto-generated method stub
-		dealer.turnHandler(gameDeck);  
-		if(((AIDealer) dealer).getBusted()) {
+		if(dealer.checkCanSplit()) {
+			setAndDisplaySplit(dealerName, dealer);
+			for(Hand h: dealer.split) {
+				dealer.setCurrHand(h);
+				dealer.turnHandler(gameDeck);
+				dealerView();
+			}		
+		}
+		else {
+			dealer.setCurrHand(dealer.hand);
+			dealer.turnHandler(gameDeck);
+			dealerView();
+		}
+		view.emptyLine();
+	}
+	
+	public void dealerView() {
+		if(getScore(dealer) > 21) {
 			view.bustedOutput(dealerName, getScore(dealer));
 			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
 		}
-		else if(((AIDealer) dealer).getStand() && !((AIDealer) dealer).getBusted()) {
+		else {
 			view.standOutput(dealerName, getScore(dealer));
 			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
 		}
-		view.emptyLine();
 	}
 
 	/*

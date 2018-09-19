@@ -10,10 +10,10 @@ public class GameController_Test extends TestCase {
 	public void testInputTypes() {
 		GameController game = new GameController();
 		
+		System.out.println("Please print c and then f");
+		
 		View.outputGamePrompt();
 		game.setInputType(sc.nextLine());
-
-		System.out.println("Please print c and then f");
 		assertEquals("c", game.getInputType());
 		
 		View.outputGamePrompt();
@@ -58,31 +58,13 @@ public class GameController_Test extends TestCase {
 	}
 	@Test
 	public void testFilePlay() {
-		/*GameController game = new GameController();
-
-		game.dealer = new AIDealer();
-		game.human = new HumanPlayer();
-
-		//instead of manual add, it reads from file and adds cards and chooses winner
-		game.dealer.getHand().addCard(new Card("H", "5", 5));
-		game.dealer.getHand().addCard(new Card("S", "10", 10));
 		
-		game.human.getHand().addCard(new Card("H", "7", 7));
-		game.human.getHand().addCard(new Card("S", "10", 10));
-		
-		//test can be changed for initial win too, change some score to 21
-		game.initialBJWinner();
-		//check winner, in this case it should be dealer
-		game.selectWinner();
-		
-		//dummy case
-		assertEquals(false, false);*/
 	}
 	
 	@Test
-	public void testSplittingGame() {
+	public void testSplittingPlayerGame() {
 		GameController game = new GameController();
-		System.out.println("Split Test starts here");
+		System.out.println("Player Split Test starts here");
 		game.dealer = new AIDealer();
 		game.human = new HumanPlayer();
 		
@@ -90,6 +72,25 @@ public class GameController_Test extends TestCase {
 		game.dealer.getHand().addCard(new Card("S", "7", 7));
 		
 		game.human.getHand().addCard(new Card("D", "K", 10));
+		game.dealer.getHand().addCard(new Card("C", "5", 5));
+		
+		View.displayHand("human", game.human.printHand());
+		View.displayHand("dealer", game.dealer.printHand());
+		
+		game.consolePlay();
+	}
+	
+	@Test
+	public void testSplittingDealerGame() {
+		GameController game = new GameController();
+		System.out.println("Dealer Split Test starts here");
+		game.dealer = new AIDealer();
+		game.human = new HumanPlayer();
+		
+		game.human.getHand().addCard(new Card("H", "3", 3));
+		game.dealer.getHand().addCard(new Card("S", "5", 5));
+		
+		game.human.getHand().addCard(new Card("D", "5", 5));
 		game.dealer.getHand().addCard(new Card("C", "5", 5));
 		
 		View.displayHand("human", game.human.printHand());

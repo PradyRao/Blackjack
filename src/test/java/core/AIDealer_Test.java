@@ -37,7 +37,7 @@ public class AIDealer_Test extends TestCase{
 		dealer.getHand().addCard(new Card("S", "10", 10));
 		dealer.getHand().addCard(new Card("S", "9", 9));
 		dealer.turnHandler(deck);
-		;
+
 		assertEquals(true, ((AIDealer) dealer).getBusted());
 		assertEquals(false, ((AIDealer) dealer).getStand());
 		
@@ -45,6 +45,8 @@ public class AIDealer_Test extends TestCase{
 		dealer2.getHand().addCard(new Card("H", "9", 9));
 		dealer2.getHand().addCard(new Card("S", "10", 10));
 		dealer2.turnHandler(deck);
+		
+		
 		assertEquals(false, dealer2.busted);
 		assertEquals(true, dealer2.stand);
 	}

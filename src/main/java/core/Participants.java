@@ -54,7 +54,7 @@ public abstract class Participants {
 		split[1].addCard(hand.getCards().get(1));
 		split[1].addCard(deck.drawCard());
 		
-		hasSplit = true;
+		this.hasSplit = true;
 	}
 	
 	public void setCurrHand(Hand newHand) {
