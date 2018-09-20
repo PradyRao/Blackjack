@@ -1,16 +1,25 @@
 package core;
 
-import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.*;
 
 public class GameController {
+	Deck gameDeck = new Deck();
+	UI view = new UI();
+	
 	Participants human;
 	Participants dealer;
-	Deck gameDeck = new Deck();
+	
 	String input = "";
 	String dealerName = "Dealer";
 	String playerName = "Player(you)";
-	UI view = new UI();
-	Scanner sc = new Scanner(System.in);
+	
+	String[] validType = {"H", "D", "S", "C"};
+	String[] validRank = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+	
+	Scanner reader;
 	
 	boolean pInstWin = false;
 	boolean dInstWin = false;
@@ -22,22 +31,307 @@ public class GameController {
 	}
 	
 	public void selectState(){
-		view.outputGamePrompt();
-		input = sc.nextLine();
+		UI.initalizeScanner();
+		UI.outputGamePrompt();
+		input = UI.input();
 		
 		if(input.equals("c")){
 			initialize(gameDeck);
 			consolePlay();
 		}
 		else if(input.equals("f")){
-			//initialize(gameDeck);
-			filePlay(); //not implemented yet
+			try {
+				filePlay("src/test/resources/testFile4.txt", gameDeck);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} //not implemented yet
 		}
 		else if(input.equals("q")){
-			sc.close();
+			UI.println("thanks for playing!");
 		}
 		else {
-			view.invalidPrompt();
+			UI.invalidPrompt();
+		}
+	}
+
+	public void consolePlay(){
+		UI.initalizeScanner();
+		initialBJWinner();
+		if(dInstWin) {
+			UI.initialBJOutput(dealerName);
+			UI.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
+		}	
+		else if(pInstWin) {
+			UI.initialBJOutput(playerName);
+			UI.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
+		}
+		else {
+			newHumanConsolePlay(/*UI.input()*/);
+			if(getBestScore(human) > 21) {
+				UI.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
+				selectWinner();
+			}
+			else {
+				dealerPlay();
+				selectWinner();
+			}
+		}	
+		//goes back to input select to choose whether to play again
+		selectState();
+	}
+	
+	/*
+	 * file play:
+	 * reads a file from a directory and puts Card and Commands into its own arrays
+	 * then plays the game
+	 */
+	public void filePlay(String path, Deck deck) throws FileNotFoundException {
+		File file = new File(path);
+		List<String> fileText = null;
+		List<String> commands = new ArrayList<String>();
+		if(file.exists()) {
+			try {
+				reader = new Scanner(new FileReader(path));
+
+				fileText = Arrays.asList(reader.useDelimiter("\\Z").next().split("\\s+"));
+				
+				
+				deck.cardList = new ArrayList<Card>();
+				
+				for(String element: fileText) {
+					if(checkValidCard(element)) {
+						deck.cardList.add(new Card(element.substring(0,1).toUpperCase(),
+								element.substring(1).toUpperCase(), 
+								deck.values.get(element.substring(1).toUpperCase())));
+					}
+					else {
+						commands.add(element);
+					}
+							
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			
+			System.out.println(fileText);
+			System.out.println(commands);
+			
+			fileInit(deck);
+			if(!commands.isEmpty()) {
+				newHumanFilePlay(commands);
+			}
+			if(getBestScore(human) > 21) {
+				UI.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
+				selectWinner();
+			}
+			else {
+				dealerPlay();
+				selectWinner();
+			}
+			
+			selectState();
+		}
+	}
+	
+	/*
+	 * dealer's main interactions are done in Dealer.turnHandler(Deck)
+	 * this function decides displays all of dealer's cards and its score
+	 * decides based on returned booleans if dealer is bust or standing 
+	 */
+	public void dealerPlay() {
+		// TODO Auto-generated method stub
+		if(dealer.checkCanSplit()) {
+			setAndDisplaySplit(dealerName, dealer);
+			for(Hand h: dealer.split) {
+				dealer.setCurrHand(h);
+				dealer.turnHandler(gameDeck);
+				dealerView();
+			}		
+		}
+		else if(getScore(dealer) > 21) {
+			UI.bustedOutput(dealerName, getScore(dealer));
+			UI.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
+		}	
+		else {
+			dealer.setCurrHand(dealer.hand);
+			dealer.turnHandler(gameDeck);
+			dealerView();
+		}
+		UI.emptyLine();
+	}
+	
+	/*
+	 * function for human player turn
+	 * goes through the game rules and prompts player to hit or stand
+	 * ends if player chooses to stand, or bursts
+	 */
+	public void newHumanConsolePlay(/*String inputType*/) {
+		if(getScore(human) <= 21) {
+			UI.displayScore(playerName, getScore(human));
+			UI.outputResponsePrompt();
+			input = UI.input();//inputType;
+		}
+		if(input.equals("D")) {
+			if(human.checkCanSplit()) {
+				human.splitHand(gameDeck);
+				System.out.println("your deck has been split");
+				System.out.println("new hand 1: ");
+				UI.displayHand(playerName, human.split[0].displayHand());
+				UI.displayScore(playerName, human.split[0].calcScoreWithAces());
+				System.out.println("new hand 2: ");
+				UI.displayHand(playerName, human.split[1].displayHand());
+				UI.displayScore(playerName, human.split[1].calcScoreWithAces());
+				
+				
+				for(Hand h: human.split) {
+					UI.outputResponsePrompt();
+					input = UI.input();//inputType;
+					doTheHumanConsoleGame(h/*, inputType*/);
+				}
+
+			}
+			else {
+				UI.print("you cannot split your hand");
+				UI.emptyLine();
+				UI.outputResponsePrompt();
+				input = UI.input();//inputType;
+				doTheHumanConsoleGame(human.hand/*, inputType*/);
+			}
+		}
+		else if(getScore(human) > 21) {
+			UI.bustedOutput(playerName, getScore(human));
+		}
+		else {
+			doTheHumanConsoleGame(human.hand/*, inputType*/);	
+		}
+	}
+	
+	private void doTheHumanConsoleGame(Hand hand /*, String inputType*/) {
+		// TODO Auto-generated method stub
+		human.setCurrHand(hand);
+		while(!input.equals("S") && getScore(human) < 21) {
+			human.getHand().hitMe(gameDeck);
+			UI.displayHand(playerName, human.printHand());
+			UI.displayScore(playerName, getScore(human));
+			
+			if(getScore(human) > 21) {
+				break;
+			}
+			UI.outputResponsePrompt();
+			input = UI.input();//inputType;
+		}
+		if(input.equals("S")) {
+			UI.standOutput(playerName, getScore(human));
+		}
+		else {
+			UI.bustedOutput(playerName, getScore(human));
+		}
+		UI.displayHand(playerName, human.printHand());
+		UI.emptyLine();
+		
+	}
+	
+	
+	/*
+	 * copy functions for file play, same as human play
+	 * really inefficient due to my code just not working with extra input parameters
+	 */
+	public void newHumanFilePlay(List<String> commands) {
+		int i = 0;
+		if(getScore(human) <= 21) {
+			UI.displayScore(playerName, getScore(human));
+			UI.outputResponsePrompt();
+			input = commands.get(i++);//inputType;
+		}
+		if(input.equals("D")) {
+			if(human.checkCanSplit()) {
+				human.splitHand(gameDeck);
+				System.out.println("your deck has been split");
+				System.out.println("new hand 1: ");
+				UI.displayHand(playerName, human.split[0].displayHand());
+				UI.displayScore(playerName, human.split[0].calcScoreWithAces());
+				System.out.println("new hand 2: ");
+				UI.displayHand(playerName, human.split[1].displayHand());
+				UI.displayScore(playerName, human.split[1].calcScoreWithAces());
+				
+				
+				for(Hand h: human.split) {
+					UI.outputResponsePrompt();
+					input = commands.get(i++);
+					doTheHumanFileGame(h, i, commands);
+				}
+
+			}
+			else {
+				UI.print("you cannot split your hand");
+				UI.emptyLine();
+				UI.outputResponsePrompt();
+				input = commands.get(i++);
+				doTheHumanFileGame(human.hand, i, commands);
+			}
+		}
+		else if(getScore(human) > 21) {
+			UI.bustedOutput(playerName, getScore(human));
+		}
+		else {
+			doTheHumanFileGame(human.hand, i, commands);	
+		}
+	}
+	
+	private void doTheHumanFileGame(Hand hand, int i, List<String> commands) {
+		// TODO Auto-generated method stub
+		human.setCurrHand(hand);
+		while(!input.equals("S") && getScore(human) < 21) {
+			human.getHand().hitMe(gameDeck);
+			UI.displayHand(playerName, human.printHand());
+			UI.displayScore(playerName, getScore(human));
+			
+			if(getScore(human) > 21) {
+				break;
+			}
+			UI.outputResponsePrompt();
+			input = commands.get(i++);//inputType;
+		}
+		if(input.equals("S")) {
+			UI.standOutput(playerName, getScore(human));
+		}
+		else {
+			UI.bustedOutput(playerName, getScore(human));
+		}
+		UI.displayHand(playerName, human.printHand());
+		UI.emptyLine();
+		
+	}
+	
+	
+	
+	/*
+	 * below are helper functions to make play work
+	 * 
+	 * 
+	 * 
+	 */
+	public void dealerView() {
+		if(getScore(dealer) > 21) {
+			UI.bustedOutput(dealerName, getScore(dealer));
+			UI.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
+		}
+		else {
+			UI.standOutput(dealerName, getScore(dealer));
+			UI.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
+		}
+	}
+	
+	public void fileInit(Deck deck){
+		human = new HumanPlayer();
+		dealer = new AIDealer();
+		for(int i = 0; i < 2; i++) {
+			human.getHand().hitMe(deck);
+		}
+		for(int i = 0; i < 2; i++) {
+			dealer.getHand().hitMe(deck);
 		}
 	}
 	
@@ -45,9 +339,9 @@ public class GameController {
 		human = new HumanPlayer(deck);
 	    dealer = new AIDealer(deck);
 	
-	    view.displayHand(playerName, human.printHand());
-	    view.displayHand(dealerName, ((AIDealer)dealer).printHand(false));
-	    view.emptyLine();
+	    UI.displayHand(playerName, human.printHand());
+	    UI.displayHand(dealerName, ((AIDealer)dealer).printHand(false));
+	    UI.emptyLine();
 	}
 	
 	
@@ -79,187 +373,6 @@ public class GameController {
 		}
 	}
 	
-	//SO FAR UP TO HERE IS GOOD
-	
-	public void selectWinner() {
-		int a = getBestScore(dealer);
-		int b = getBestScore(human);
-		if(b > 21) {
-			view.outputDealerWin();
-			dealerWin = true;
-		}
-		else if(a > 21 && b <= 21) {
-			view.outputPlayerWin();
-		}
-		else if(a <= 21 && b > 21) {
-			dealerWin = true;
-			view.outputDealerWin();
-		}
-		else if(a >= b && a <= 21) {
-			dealerWin = true;
-			view.outputDealerWin();
-		}
-		else if(b > a && b <= 21) {
-			view.outputPlayerWin();
-		}
-		view.emptyLine();
-	}
-
-	public void consolePlay(){
-		initialBJWinner();
-		if(dInstWin) {
-			view.initialBJOutput(dealerName);
-			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
-		}	
-		else if(pInstWin) {
-			view.initialBJOutput(playerName);
-			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
-		}
-		else {
-			newHumanPlay();
-			if(getBestScore(human) > 21) {
-				view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
-				selectWinner();
-			}
-			else {
-				dealerPlay();
-				selectWinner();
-			}
-		}	
-		//goes back to input select to choose whether to play again
-		System.out.println("do you want to go back to main menu? Yes(y) No(n): ");
-		input = sc.nextLine();
-		if(input.equals("y")) {
-			selectState();
-		}
-		else {
-			System.out.println("thanks for playing!");
-		}
-	}
-
-	public void filePlay() {
-		//not yet implemented
-	}
-	
-	public void setAndDisplaySplit(String name, Participants player) {
-		player.splitHand(gameDeck);
-		
-		System.out.println(name + " deck has been split");
-		System.out.println("new hand 1: ");
-		view.displayHand(name, player.split[0].displayHand());
-		view.displayScore(name, player.split[0].calcScoreWithAces());
-		System.out.println("new hand 2: ");
-		view.displayHand(name, player.split[1].displayHand());
-		view.displayScore(name, player.split[1].calcScoreWithAces());
-	}
-
-	/*
-	 * dealer's main interactions are done in Dealer.turnHandler(Deck)
-	 * this function decides displays all of dealer's cards and its score
-	 * decides based on returned booleans if dealer is bust or standing 
-	 */
-	public void dealerPlay() {
-		// TODO Auto-generated method stub
-		if(dealer.checkCanSplit()) {
-			setAndDisplaySplit(dealerName, dealer);
-			for(Hand h: dealer.split) {
-				dealer.setCurrHand(h);
-				dealer.turnHandler(gameDeck);
-				dealerView();
-			}		
-		}
-		else if(getScore(dealer) > 21) {
-			view.bustedOutput(dealerName, getScore(dealer));
-			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
-		}	
-		else {
-			dealer.setCurrHand(dealer.hand);
-			dealer.turnHandler(gameDeck);
-			dealerView();
-		}
-		view.emptyLine();
-	}
-	
-	public void dealerView() {
-		if(getScore(dealer) > 21) {
-			view.bustedOutput(dealerName, getScore(dealer));
-			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
-		}
-		else {
-			view.standOutput(dealerName, getScore(dealer));
-			view.displayHand(dealerName, ((AIDealer)dealer).printHand(true));
-		}
-	}
-
-	/*
-	 * function for human player turn
-	 * goes through the game rules and prompts player to hit or stand
-	 * ends if player chooses to stand, or bursts
-	 */
-	public void newHumanPlay() {
-		if(getScore(human) <= 21) {
-			view.displayScore(playerName, getScore(human));
-			view.outputResponsePrompt();
-			input = sc.nextLine();
-		}
-		if(input.equals("D")) {
-			if(human.checkCanSplit()) {
-				human.splitHand(gameDeck);
-				System.out.println("your deck has been split");
-				System.out.println("new hand 1: ");
-				view.displayHand(playerName, human.split[0].displayHand());
-				view.displayScore(playerName, human.split[0].calcScoreWithAces());
-				System.out.println("new hand 2: ");
-				view.displayHand(playerName, human.split[1].displayHand());
-				view.displayScore(playerName, human.split[1].calcScoreWithAces());
-				
-				
-				for(Hand h: human.split) {
-					view.outputResponsePrompt();
-					input = sc.nextLine();
-					doTheHumanGame(h);
-				}
-
-			}
-			else {
-				System.out.println("you cannot split your hand");
-				view.outputResponsePrompt();
-				input = sc.nextLine();
-				doTheHumanGame(human.hand);
-			}
-		}
-		else if(getScore(human) > 21) {
-			view.bustedOutput(playerName, getScore(human));
-		}
-		else {
-			doTheHumanGame(human.hand);	
-		}
-	}
-	
-	private void doTheHumanGame(Hand hand) {
-		// TODO Auto-generated method stub
-		human.setCurrHand(hand);
-		while(!input.equals("S") && getScore(human) < 21) {
-			human.getHand().hitMe(gameDeck);
-			view.displayHand(playerName, human.printHand());
-			view.displayScore(playerName, getScore(human));
-			
-			if(getScore(human) > 21) {
-				break;
-			}
-			view.outputResponsePrompt();
-			input = sc.nextLine();
-		}
-		if(input.equals("S")) {
-			view.standOutput(playerName, getScore(human));
-		}
-		else {
-			view.bustedOutput(playerName, getScore(human));
-		}
-		view.displayHand(playerName, human.printHand());
-		view.emptyLine();
-		
-	}
 	
 	public int getBestScore(Participants player) {
 		if(player.hasSplit) {
@@ -284,19 +397,56 @@ public class GameController {
 		}
 		return getScore(player);	
 	}
+	
+	public void selectWinner() {
+		int a = getBestScore(dealer);
+		int b = getBestScore(human);
+		if(b > 21) {
+			UI.outputDealerWin();
+			dealerWin = true;
+		}
+		else if(a > 21 && b <= 21) {
+			UI.outputPlayerWin();
+		}
+		else if(a <= 21 && b > 21) {
+			dealerWin = true;
+			UI.outputDealerWin();
+		}
+		else if(a >= b && a <= 21) {
+			dealerWin = true;
+			UI.outputDealerWin();
+		}
+		else if(b > a && b <= 21) {
+			UI.outputPlayerWin();
+		}
+		UI.emptyLine();
+	}
+	
 
-	/* 
-	 * methods below are purely for testing purposes
-	 */
-	public void setInputType(String string) {
-		// TODO Auto-generated method stub
-		input = string;
+	
+	public void setAndDisplaySplit(String name, Participants player) {
+		player.splitHand(gameDeck);
+		
+		UI.print(name + " deck has been split");
+		System.out.println("new hand 1: ");
+		UI.displayHand(name, player.split[0].displayHand());
+		UI.displayScore(name, player.split[0].calcScoreWithAces());
+		UI.print("new hand 2: ");
+		UI.displayHand(name, player.split[1].displayHand());
+		UI.displayScore(name, player.split[1].calcScoreWithAces());
+	}
+	
+	public boolean checkValidCard(String element) {
+		for(String t: validType) {
+			for(String r: validRank) {
+				if(element.equals(t + r)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
-	public Object getInputType() {
-		// TODO Auto-generated method stub
-		return input;
-	}
 }
 		
 	    

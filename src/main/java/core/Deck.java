@@ -50,7 +50,7 @@ public class Deck {
 	}
 	
 	public Card drawCard() {
-		return cardList.remove(cardList.size()-1);		
+		return cardList.remove(0);		
 	}
 	
 	public int getSize() {

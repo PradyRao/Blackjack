@@ -57,8 +57,8 @@ public class AIDealer extends Participants {
 	@Override
 	public boolean checkCanSplit() {
 		// TODO Auto-generated method stub
-		if(this.getHand().getCards().get(0).getKey() == 
-				this.getHand().getCards().get(1).getKey() && this.getHand().calcScoreWithAces() <= 17) {
+		if(this.getHand().getCards().get(0).getKey().equals
+			(this.getHand().getCards().get(1).getKey()) && this.getHand().calcScoreWithAces() <= 17) {
 			return true;	
 		}
 		return false;
