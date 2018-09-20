@@ -130,8 +130,6 @@ public class GameController {
 				dealerPlay();
 				selectWinner();
 			}
-			
-			selectState();
 		}
 	}
 	
