@@ -43,6 +43,8 @@ public class Hand_Test extends TestCase {
 	@Test
 	public void testAce() {
 		Hand hand = new Hand();
+		Hand hand2 = new Hand();
+		Hand hand3 = new Hand();
 		
 		//first tests whether hand has any cards, and add and hit functions
 		assertEquals(0, hand.getSize());
@@ -54,5 +56,17 @@ public class Hand_Test extends TestCase {
 		//checks if there is an Ace card worth 11
 		assertEquals(19, hand.calcScoreWithAces());	
 		assertEquals(true, hand.getIsAce());
+		
+		//there is an ace that counts as 11 first, then becomes 1 at the presence of another ace worth 11
+		hand2.addCard(new Card("D", "A", 11));
+		hand2.addCard(new Card("S", "A", 11));
+		assertEquals(12, hand2.calcScoreWithAces());
+		
+		//hand with 3 aces, 2 of them worth 1 each
+		hand3.addCard(new Card("H", "A", 11));
+		hand3.addCard(new Card("S", "A", 11));
+		hand3.addCard(new Card("C", "A", 11));
+		assertEquals(13, hand3.calcScoreWithAces());
+		
 	}
 }

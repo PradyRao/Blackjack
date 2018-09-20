@@ -3,6 +3,14 @@ import org.junit.Test;
 import junit.framework.TestCase;
 public class AIDealer_Test extends TestCase{
 	@Test
+	public void testVisible() {
+		Deck deck = new Deck();
+		Participants dealer = new AIDealer(deck);
+		
+		((AIDealer)dealer).printHand(false);
+	}
+	
+	@Test
 	public void testDealerHitHander() {
 		Participants dealer = new AIDealer();
 		Participants dealer2 = new AIDealer();

@@ -20,4 +20,25 @@ public class Deck_Test extends TestCase{
 		
 		assertEquals(a, deck.getSize());
 	}
+	
+	@Test
+	public void testJQK() {
+		Deck deck = new Deck();
+		int a=0,b=0,c=0;
+		for(int i = 0; i < deck.getSize(); i++) {
+			if(deck.getCardList().get(i).getKey().equals("J")){
+				a = deck.getCardList().get(i).getValue();
+			}
+			if(deck.getCardList().get(i).getKey().equals("Q")){
+				b = deck.getCardList().get(i).getValue();
+			}
+			if(deck.getCardList().get(i).getKey().equals("K")){
+				c = deck.getCardList().get(i).getValue();
+			}		
+		}
+		
+		assertEquals(10, a);
+		assertEquals(10, b);
+		assertEquals(10, c);
+	}
 }
