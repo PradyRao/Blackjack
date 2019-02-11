@@ -1,2 +1,2 @@
-# IndividualProject_COMP3004
-A simple game of blackjack
+# BlackJack Project
+Game of Blackjack with an AI Dealer
